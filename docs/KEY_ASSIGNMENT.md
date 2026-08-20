@@ -70,7 +70,7 @@ SwitchTester 展示用テスター(HE / MX)の「物理スイッチ位置 → ev
 
 - MX 基板の case_top は 2 段構造で、**行5〜行6 は高デッキより 2.7mm 低い低デッキ(上面 z=5.655)** にあり、choc ロープロファイルスイッチ(Choc V2 等)が載ります。行1〜行4 は高デッキ(上面 z=8.355)です。
 - 全 48 位置に MX 32 個 + Choc 16 個を割り当て済み(2026-08-20 時点)。
-- 行内の並びは「同じ感触で押下圧のグラデーション」(左→右に力が単調増加)になるよう配置しています。
+- MX / Choc それぞれで「リニア → タクタイル → クリッキー」の順に並び、各感触グループ内では押下圧の軽い → 重い順(左 → 右)になるよう配置しています。
 
 ### 3-1. 物理配置図(番号は割当コード)
 
@@ -94,49 +94,49 @@ SwitchTester 展示用テスター(HE / MX)の「物理スイッチ位置 → ev
 | 行1列3 | Numpad3 | KC_KP_3 | HC Studio HMX Xinhai Linear 37g | linear |
 | 行1列4 | Numpad4 | KC_KP_4 | HMX LuLu Silent | linear |
 | 行1列5 | Numpad5 | KC_KP_5 | Kailh Super Speed Silver (Linear) | linear |
-| 行1列6 | Numpad6 | KC_KP_6 | WS BigLucky Clicky | clicky |
-| 行1列7 | Numpad7 | KC_KP_7 | Kailh Super Speed Bronze (Clicky) | clicky |
-| 行1列8 | Numpad8 | KC_KP_8 | Gateron Harmonic | clicky |
-| 行2列1 | BracketRight | KC_RBRC | TTC Frozen Silent V2 | linear |
-| 行2列2 | Backslash | KC_BSLS | Kailh Midnight Silent V2 Linear | linear |
-| 行2列3 | Semicolon | KC_SCLN | Durock Silent Linear Dolphin | linear |
-| 行2列4 | Quote | KC_QUOT | HMX Blackberry | linear |
-| 行2列5 | Comma | KC_COMM | Gateron Mint Smoothie | linear |
-| 行2列6 | Period | KC_DOT | HMX SnowCrash | linear |
-| 行2列7 | Slash | KC_SLSH | Durock Ice King Linear | linear |
-| 行2列8 | Backspace | KC_BSPC | Gateron Oil King (V2) | linear |
-| 行3列1 | Digit7 | KC_7 | Outemu Lemon V3 Silent Tactile | tactile |
-| 行3列2 | Digit8 | KC_8 | Kailh Super Speed Copper (Tactile) | tactile |
-| 行3列3 | Digit9 | KC_9 | WingTree Puer Tea | tactile |
-| 行3列4 | Digit0 | KC_0 | WingTree Golden Apple V2 | tactile |
-| 行3列5 | Backquote | KC_GRV | Outemu Creamy Yellow | tactile |
-| 行3列6 | Minus | KC_MINS | WS BigLucky Tactile | tactile |
-| 行3列7 | Equal | KC_EQL | Gateron Mini i | tactile |
-| 行3列8 | BracketLeft | KC_LBRC | Sillyworks × HMX Waverider V2 | tactile |
-| 行4列1 | KeyY | KC_Y | HMX Purple Dawn | linear |
-| 行4列2 | KeyZ | KC_Z | Durock Full POK Mocha Tactile | tactile |
-| 行4列3 | Digit1 | KC_1 | Kailh Midnight Silent V2 Tactile | tactile |
-| 行4列4 | Digit2 | KC_2 | Durock Ice King Tactile | tactile |
-| 行4列5 | Digit3 | KC_3 | Gateron Jupiter Banana | tactile |
-| 行4列6 | Digit4 | KC_4 | Gateron Grape Smoothie | tactile |
-| 行4列7 | Digit5 | KC_5 | Gateron Lanes | tactile |
-| 行4列8 | Digit6 | KC_6 | Durock T1 Shrimp | tactile |
+| 行1列6 | Numpad6 | KC_KP_6 | TTC Frozen Silent V2 | linear |
+| 行1列7 | Numpad7 | KC_KP_7 | Kailh Midnight Silent V2 Linear | linear |
+| 行1列8 | Numpad8 | KC_KP_8 | Durock Silent Linear Dolphin | linear |
+| 行2列1 | BracketRight | KC_RBRC | HMX Blackberry | linear |
+| 行2列2 | Backslash | KC_BSLS | Gateron Mint Smoothie | linear |
+| 行2列3 | Semicolon | KC_SCLN | HMX SnowCrash | linear |
+| 行2列4 | Quote | KC_QUOT | Durock Ice King Linear | linear |
+| 行2列5 | Comma | KC_COMM | Gateron Oil King (V2) | linear |
+| 行2列6 | Period | KC_DOT | HMX Purple Dawn | linear |
+| 行2列7 | Slash | KC_SLSH | Outemu Lemon V3 Silent Tactile | tactile |
+| 行2列8 | Backspace | KC_BSPC | Kailh Super Speed Copper (Tactile) | tactile |
+| 行3列1 | Digit7 | KC_7 | WingTree Puer Tea | tactile |
+| 行3列2 | Digit8 | KC_8 | WingTree Golden Apple V2 | tactile |
+| 行3列3 | Digit9 | KC_9 | Outemu Creamy Yellow | tactile |
+| 行3列4 | Digit0 | KC_0 | WS BigLucky Tactile | tactile |
+| 行3列5 | Backquote | KC_GRV | Gateron Mini i | tactile |
+| 行3列6 | Minus | KC_MINS | Sillyworks × HMX Waverider V2 | tactile |
+| 行3列7 | Equal | KC_EQL | Durock Full POK Mocha Tactile | tactile |
+| 行3列8 | BracketLeft | KC_LBRC | Kailh Midnight Silent V2 Tactile | tactile |
+| 行4列1 | KeyY | KC_Y | Durock Ice King Tactile | tactile |
+| 行4列2 | KeyZ | KC_Z | Gateron Jupiter Banana | tactile |
+| 行4列3 | Digit1 | KC_1 | Gateron Grape Smoothie | tactile |
+| 行4列4 | Digit2 | KC_2 | Gateron Lanes | tactile |
+| 行4列5 | Digit3 | KC_3 | Durock T1 Shrimp | tactile |
+| 行4列6 | Digit4 | KC_4 | WS BigLucky Clicky | clicky |
+| 行4列7 | Digit5 | KC_5 | Kailh Super Speed Bronze (Clicky) | clicky |
+| 行4列8 | Digit6 | KC_6 | Gateron Harmonic | clicky |
 | 行5列1 | KeyQ | KC_Q | **Kailh Choc V2 Silent Purple (Purple Iris)** | linear |
 | 行5列2 | KeyR | KC_R | **Kailh Deep Sea Mini Pink Island** | linear |
 | 行5列3 | KeyS | KC_S | **Kailh Saker Mini** | linear |
 | 行5列4 | KeyT | KC_T | **Kailh Taro Ice Cream Mini Full-POM** | linear |
 | 行5列5 | KeyU | KC_U | **Kailh Glacial Silver** | linear |
 | 行5列6 | KeyV | KC_V | **Kailh Spring MINI** | linear |
-| 行5列7 | KeyW | KC_W | **Kailh White Owl Mini (Saker Clicky)** | clicky |
-| 行5列8 | KeyX | KC_X | **Kailh ALL-POM HIDE MOUNTAIN** | clicky |
-| 行6列1 | KeyI | KC_I | **LOFREE Specter Low-profile POM** | linear |
-| 行6列2 | KeyJ | KC_J | **LOFREE Surfer Low-profile POM** | linear |
-| 行6列3 | KeyK | KC_K | **LOFREE Hades Low-profile POM** | linear |
-| 行6列4 | KeyL | KC_L | **LOFREE Void Low-profile POM** | linear |
-| 行6列5 | KeyM | KC_M | **Kailh Deep Sea Silent mini Islet** | linear |
-| 行6列6 | KeyN | KC_N | **Kailh Black Cloud** | tactile |
-| 行6列7 | KeyO | KC_O | **Kailh Deep Sea Mini Whale** | tactile |
-| 行6列8 | KeyP | KC_P | **Kailh White Rain** | linear |
+| 行5列7 | KeyW | KC_W | **LOFREE Specter Low-profile POM** | linear |
+| 行5列8 | KeyX | KC_X | **LOFREE Surfer Low-profile POM** | linear |
+| 行6列1 | KeyI | KC_I | **LOFREE Hades Low-profile POM** | linear |
+| 行6列2 | KeyJ | KC_J | **LOFREE Void Low-profile POM** | linear |
+| 行6列3 | KeyK | KC_K | **Kailh Deep Sea Silent mini Islet** | linear |
+| 行6列4 | KeyL | KC_L | **Kailh White Rain** | linear |
+| 行6列5 | KeyM | KC_M | **Kailh Black Cloud** | tactile |
+| 行6列6 | KeyN | KC_N | **Kailh Deep Sea Mini Whale** | tactile |
+| 行6列7 | KeyO | KC_O | **Kailh White Owl Mini (Saker Clicky)** | clicky |
+| 行6列8 | KeyP | KC_P | **Kailh ALL-POM HIDE MOUNTAIN** | clicky |
 
 > 行5〜行6(太字)= Choc ロープロファイルスイッチ。低デッキ(z=5.655)に載せ、3D 上でも choc スタイル(低背ハウジング + 15mm 低背キャップ)で描画されます。
 > 行1(奥)の Numpad1〜8 は、基本ルール 3 の「iPad キオスクで安全なキー」(F13〜F24 → 通常キー → それ以外)の続きとして追加定義した割当です。F1〜F12・修飾キー・矢印・Home/End/PageUp/PageDown・Esc・Tab・Space・Enter は引き続き使用しません。

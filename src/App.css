@@ -1306,6 +1306,130 @@
     inset 0 0 8px rgba(255, 255, 255, 0.18);
 }
 
+/* 押下圧のデュアルレンジバー(最小・最大の 2 ツマミ)。
+   2 つの input[type=range] を重ね、トラックの塗りは専用 div(.gacha-range-fill)で表現する。
+   input 自体は pointer-events: none にしてツマミ部分だけ掴めるようにし、
+   touch-action: none でタッチドラッグ中のスクロールを抑止する(iPad 対応)。 */
+.gacha-force-range {
+  position: relative;
+  flex: 1 1 240px;
+  min-width: 220px;
+  height: 44px;
+  touch-action: none;
+}
+
+.gacha-range-track {
+  position: absolute;
+  left: 14px; /* ツマミ半径ぶんのオフセットで塗りがツマミ中心に揃う */
+  right: 14px;
+  top: 50%;
+  height: 6px;
+  transform: translateY(-50%);
+  border-radius: 999px;
+  background: rgba(120, 150, 210, 0.18);
+}
+
+.gacha-range-fill {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #2f6bff, #3d7bff);
+  box-shadow: 0 0 10px rgba(79, 140, 255, 0.45);
+}
+
+.gacha-range-input {
+  appearance: none;
+  -webkit-appearance: none;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  background: transparent;
+  pointer-events: none;
+  touch-action: none;
+}
+
+.gacha-range-input--min {
+  /* 常に min <= max なので、値が小さい側のツマミを上に重ねる。
+     2 ツマミが同値(min == max)で重なったときも min 側が掴める。 */
+  z-index: 3;
+}
+
+.gacha-range-input--max {
+  z-index: 2;
+}
+
+/* ホバー/フォーカス中のツマミを最前面へ(同値時にキーボードで max 側へフォーカスした場合など) */
+.gacha-range-input:hover,
+.gacha-range-input:focus-visible {
+  z-index: 4;
+}
+
+.gacha-range-input::-webkit-slider-runnable-track {
+  background: transparent;
+  border: none;
+}
+
+.gacha-range-input::-moz-range-track {
+  background: transparent;
+  border: none;
+}
+
+.gacha-range-input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid #9fc2ff;
+  background: radial-gradient(circle at 35% 30%, #5d8aff, #2f6bff 60%, #1d3fa8);
+  box-shadow:
+    0 2px 10px rgba(2, 6, 16, 0.6),
+    0 0 12px rgba(79, 140, 255, 0.5);
+  cursor: grab;
+  pointer-events: auto; /* ツマミのみドラッグ可能にする */
+}
+
+.gacha-range-input::-webkit-slider-thumb:active {
+  cursor: grabbing;
+}
+
+.gacha-range-input::-moz-range-thumb {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 2px solid #9fc2ff;
+  background: radial-gradient(circle at 35% 30%, #5d8aff, #2f6bff 60%, #1d3fa8);
+  box-shadow:
+    0 2px 10px rgba(2, 6, 16, 0.6),
+    0 0 12px rgba(79, 140, 255, 0.5);
+  cursor: grab;
+  pointer-events: auto;
+}
+
+.gacha-range-input::-moz-range-thumb:active {
+  cursor: grabbing;
+}
+
+.gacha-range-input:focus-visible {
+  outline: 2px solid #6f9dff;
+  outline-offset: 4px;
+  border-radius: 999px;
+}
+
+.gacha-range-value {
+  flex: 0 0 auto;
+  min-width: 4.6rem;
+  text-align: right;
+  font-size: 0.95rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+  color: #e8f0ff;
+}
+
 /* 基板ラベル(メカニカル / 磁気)。idle の both 表示時のみ。
    TesterStage の Html(3D 投影)で各ボードの直上に配置されるため、
    ここではチップの見た目のみを持ち、位置は指定しない。 */

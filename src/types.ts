@@ -3,14 +3,6 @@ export type SwitchFeel = 'linear' | 'tactile' | 'clicky'
 
 /** idle 絞り込み: 感触フィルタ('all' = 指定なし) */
 export type FeelFilter = 'all' | SwitchFeel
-/** idle 絞り込み: 押下圧フィルタ('all' = 指定なし)。lt35 = 〜34g / 35to39 = 35〜39g / gte40 = 40g〜 */
-export type ForceFilter = 'all' | 'lt35' | '35to39' | 'gte40'
-
-/** idle 絞り込み状態。いずれかが 'all' 以外ならフィルタモード */
-export interface StageFilter {
-  feel: FeelFilter
-  force: ForceFilter
-}
 
 export interface SwitchInfo {
   id: string

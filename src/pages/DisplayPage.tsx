@@ -1,15 +1,49 @@
-import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent, type CSSProperties } from 'react'
 import { Link } from 'react-router-dom'
 import { GachaCard } from '../components/GachaCard'
 import { TesterStage } from '../components/TesterStage'
 import { loadEffectiveData } from '../data/storage'
 import { useKeyDown } from '../hooks/useKeyDown'
-import type { FeelFilter, StageFilter, SwitchForm, SwitchInfo, TesterData } from '../types'
+import type { FeelFilter, SwitchForm, SwitchInfo, TesterData } from '../types'
 
 const DISPLAY_MS = 10_000
 const REVEAL_MS = 1_050
 /** 絞り込み条件変更・キー押下からフィルタを維持する時間(この間にキー押下がなければ全解除) */
 const FILTER_IDLE_MS = 60_000
+
+/** 押下圧スライダーの既定範囲(データ読込前のプレースホルダ。読込後に forceBounds へ合わせる) */
+const DEFAULT_FORCE_RANGE = { min: 25, max: 70 } as const
+
+/** 押下圧の絞り込み範囲(g)。[min, max] に force が含まれるスイッチだけ該当 */
+interface ForceRange {
+  min: number
+  max: number
+}
+
+/**
+ * idle 絞り込み状態。feel は従来どおり、force は [min,max] の範囲指定。
+ * force が forceBounds(=全範囲)と一致するときのみ「すべて」(絞り込みなし)扱い。
+ * 押下圧をレンジバー化したのに伴い types.ts のボタン式 StageFilter/ForceFilter を
+ * 廃止し、このファイルと TesterStage.tsx にローカル定義している(両者の形状は構造的に同一)。
+ */
+interface StageFilter {
+  feel: FeelFilter
+  force: ForceRange
+  /** force の取り得る全範囲(データの force 最小〜最大を 5g 刻みに丸めた見やすい境界) */
+  forceBounds: ForceRange
+}
+
+/** 操作荷重表示(例 "55g")をグラム数へ。不明(null/undefined)は null(TesterStage と同一実装) */
+function parseForceGrams(force: string | null | undefined): number | null {
+  if (force == null) return null
+  const n = parseFloat(String(force).replace(/[^0-9.]/g, ''))
+  return Number.isFinite(n) ? n : null
+}
+
+/** force 範囲が全範囲(=絞り込みなし)か */
+function isForceFull(force: ForceRange, bounds: ForceRange): boolean {
+  return force.min <= bounds.min && force.max >= bounds.max
+}
 
 type Phase = 'loading' | 'idle' | 'revealing' | 'showing' | 'exiting'
 
@@ -37,7 +71,11 @@ export function DisplayPage() {
   const [stageDisplay, setStageDisplay] = useState<SwitchForm | 'both'>('both')
   const [revealCount, setRevealCount] = useState(0)
   const [pressedCode, setPressedCode] = useState<string | null>(null)
-  const [filter, setFilter] = useState<StageFilter>({ feel: 'all', force: 'all' })
+  const [filter, setFilter] = useState<StageFilter>({
+    feel: 'all',
+    force: { ...DEFAULT_FORCE_RANGE },
+    forceBounds: { ...DEFAULT_FORCE_RANGE },
+  })
   const [reducedMotion, setReducedMotion] = useState(
     () => window.matchMedia('(prefers-reduced-motion: reduce)').matches,
   )
@@ -78,10 +116,42 @@ export function DisplayPage() {
     return map
   }, [data])
 
+  /**
+   * 押下圧スライダーの全範囲: データの force 最小〜最大を 5g 刻みの見やすい境界に丸める。
+   * (現行データは 27g〜67g → 25〜70g。force 不明のスイッチは除外)
+   */
+  const forceBounds = useMemo<ForceRange>(() => {
+    let min = Infinity
+    let max = -Infinity
+    for (const s of data?.switches ?? []) {
+      const g = parseForceGrams(s.force)
+      if (g == null) continue
+      if (g < min) min = g
+      if (g > max) max = g
+    }
+    if (!Number.isFinite(min)) return { ...DEFAULT_FORCE_RANGE }
+    return { min: Math.floor(min / 5) * 5, max: Math.ceil(max / 5) * 5 }
+  }, [data])
+
+  // データ読込後に既定範囲(全範囲)を実データへ合わせる。ユーザーが絞り込み中でも
+  // forceBounds が変わった場合は force を新しい全範囲内にクランプする。
+  useEffect(() => {
+    setFilter((f) => {
+      if (isForceFull(f.force, f.forceBounds)) {
+        return { ...f, forceBounds, force: { ...forceBounds } }
+      }
+      const min = Math.max(f.force.min, forceBounds.min)
+      const max = Math.min(f.force.max, forceBounds.max)
+      // 範囲縮小でクランプが反転する(min > max)場合は全範囲へ戻す
+      const force = min <= max ? { min, max } : { ...forceBounds }
+      return { ...f, forceBounds, force }
+    })
+  }, [forceBounds])
+
   /** keymap のエントリ順(key 押下→穴位置の割り当て順序) */
   const keymapCodes = useMemo(() => (data ? Object.keys(data.keymap) : []), [data])
 
-  /** データに clicky スイッチが存在するか(存在する場合のみ UI にクリキーを出す) */
+  /** データに clicky スイッチが存在するか(存在する場合のみ UI にクリッキーを出す) */
   const hasClicky = useMemo(() => data?.switches.some((s) => s.feel === 'clicky') ?? false, [data])
 
   /** 感触フィルタの選択肢(clicky がデータに無ければ出さない) */
@@ -119,7 +189,8 @@ export function DisplayPage() {
     clearFilterTimer()
     filterTimerRef.current = window.setTimeout(() => {
       filterTimerRef.current = null
-      setFilter({ feel: 'all', force: 'all' })
+      // 全解除: 感触 all + 押下圧を全範囲へ戻す
+      setFilter((f) => ({ ...f, feel: 'all', force: { ...f.forceBounds } }))
     }, FILTER_IDLE_MS)
   }, [clearFilterTimer])
 
@@ -127,7 +198,7 @@ export function DisplayPage() {
   const changeFilter = useCallback(
     (next: StageFilter) => {
       setFilter(next)
-      if (next.feel !== 'all' || next.force !== 'all') resetFilterTimer()
+      if (next.feel !== 'all' || !isForceFull(next.force, next.forceBounds)) resetFilterTimer()
     },
     [resetFilterTimer],
   )
@@ -205,6 +276,18 @@ export function DisplayPage() {
 
   useKeyDown(onKey, Boolean(data))
 
+  /** 押下圧スライダー(最小側)の変更。最大値は超えないようクランプ */
+  const onForceMinChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const min = Math.min(Number(e.target.value), filter.force.max)
+    changeFilter({ ...filter, force: { ...filter.force, min } })
+  }
+
+  /** 押下圧スライダー(最大側)の変更。最小値未満にはならないようクランプ */
+  const onForceMaxChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const max = Math.max(Number(e.target.value), filter.force.min)
+    changeFilter({ ...filter, force: { ...filter.force, max } })
+  }
+
   if (error) {
     return (
       <main className="kiosk kiosk-center">
@@ -224,6 +307,14 @@ export function DisplayPage() {
 
   const progress = remainingMs / DISPLAY_MS
   const secondsLeft = Math.ceil(remainingMs / 1000)
+
+  /** 押下圧スライダー表示用のパーセント(塗り範囲)とラベル */
+  const forceSpan = Math.max(1, filter.forceBounds.max - filter.forceBounds.min)
+  const forceMinPct = ((filter.force.min - filter.forceBounds.min) / forceSpan) * 100
+  const forceMaxPct = ((filter.force.max - filter.forceBounds.min) / forceSpan) * 100
+  const forceText = isForceFull(filter.force, filter.forceBounds)
+    ? 'すべて'
+    : `${filter.force.min}〜${filter.force.max}g`
 
   /** WebGL 非対応 / GLB 読込失敗時の 2D 待機画面 */
   const fallbackHome = (
@@ -284,32 +375,47 @@ export function DisplayPage() {
                   className={`gacha-filter-btn${filter.feel === f ? ' is-active' : ''}`}
                   onClick={() => changeFilter({ ...filter, feel: f })}
                 >
-                  {f === 'all' ? 'すべて' : f === 'linear' ? 'リニア' : f === 'tactile' ? 'タクタイル' : 'クリキー'}
+                  {f === 'all' ? 'すべて' : f === 'linear' ? 'リニア' : f === 'tactile' ? 'タクタイル' : 'クリッキー'}
                 </button>
               ))}
             </div>
           </div>
           <div className="gacha-filter-row">
             <span className="gacha-filter-label">押下圧</span>
-            <div className="gacha-filter-btns" role="group" aria-label="押下圧で絞り込み">
-              {(
-                [
-                  ['all', 'すべて'],
-                  ['lt35', '〜34g'],
-                  ['35to39', '35〜39g'],
-                  ['gte40', '40g〜'],
-                ] as const
-              ).map(([f, label]) => (
-                <button
-                  key={f}
-                  type="button"
-                  className={`gacha-filter-btn${filter.force === f ? ' is-active' : ''}`}
-                  onClick={() => changeFilter({ ...filter, force: f })}
-                >
-                  {label}
-                </button>
-              ))}
+            <div className="gacha-force-range">
+              <div className="gacha-range-track" aria-hidden="true">
+                <div
+                  className="gacha-range-fill"
+                  style={{
+                    left: `${forceMinPct}%`,
+                    right: `${100 - forceMaxPct}%`,
+                  }}
+                />
+              </div>
+              <input
+                type="range"
+                className="gacha-range-input gacha-range-input--min"
+                min={filter.forceBounds.min}
+                max={filter.forceBounds.max}
+                step={1}
+                value={filter.force.min}
+                aria-label="押下圧の最小値"
+                onChange={onForceMinChange}
+              />
+              <input
+                type="range"
+                className="gacha-range-input gacha-range-input--max"
+                min={filter.forceBounds.min}
+                max={filter.forceBounds.max}
+                step={1}
+                value={filter.force.max}
+                aria-label="押下圧の最大値"
+                onChange={onForceMaxChange}
+              />
             </div>
+            <span className="gacha-range-value" aria-live="polite">
+              {forceText}
+            </span>
           </div>
         </div>
       )}

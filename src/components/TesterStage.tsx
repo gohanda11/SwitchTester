@@ -5,7 +5,29 @@ import { MeshoptDecoder } from 'meshoptimizer/decoder'
 import * as THREE from 'three'
 import { RoundedBoxGeometry, type GLTFLoader } from 'three-stdlib'
 import { loadEffectiveData, resolveAsset } from '../data/storage'
-import type { StageFilter, SwitchForm, SwitchInfo } from '../types'
+import type { FeelFilter, SwitchForm, SwitchInfo } from '../types'
+
+/**
+ * idle 絞り込み状態。押下圧は [min,max] の範囲指定(DisplayPage のレンジバー UI と対応)。
+ * force が forceBounds(=全範囲)と一致するときのみ「すべて」(絞り込みなし)扱い。
+ * 押下圧レンジバー化に伴い types.ts の旧定義(StageFilter/ForceFilter)を廃止し、
+ * DisplayPage.tsx と同一形状をローカル定義している。
+ */
+interface ForceRange {
+  min: number
+  max: number
+}
+
+interface StageFilter {
+  feel: FeelFilter
+  force: ForceRange
+  forceBounds: ForceRange
+}
+
+/** force 範囲が全範囲(=絞り込みなし)か */
+function isForceFull(force: ForceRange, bounds: ForceRange): boolean {
+  return force.min <= bounds.min && force.max >= bounds.max
+}
 
 const MODEL_MX = resolveAsset('models/tester_mx.glb')
 const MODEL_HE = resolveAsset('models/tester_he.glb')
@@ -731,12 +753,12 @@ function TesterKey({
   const mappedSet = useMemo(() => new Set(mapped.filter((h) => h >= 0)), [mapped])
   const centers = useMemo(() => holeCenters(form), [form])
 
-  const filterActive = filter.feel !== 'all' || filter.force !== 'all'
+  const filterActive = filter.feel !== 'all' || !isForceFull(filter.force, filter.forceBounds)
 
   /**
    * フィルタに該当する穴(グローバルインデックス)。
    * マップ済みキーのうち feel/force の両条件(AND)を満たすもののみ。
-   * force=null は force 条件が 'all' の時だけ該当(それ以外は非該当扱い)。
+   * force=null は押下圧範囲が全範囲(=絞り込みなし)の時だけ該当(それ以外は非該当扱い)。
    * 非該当(マップ済み非該当・unmapped placeholder)は KeyCluster 側で暗色になる。
    */
   const matchedHoles = useMemo(() => {
@@ -748,17 +770,15 @@ function TesterKey({
       const info = infoByCode.get(code)
       if (!info) return
       if (filter.feel !== 'all' && info.feel !== filter.feel) return
-      if (filter.force !== 'all') {
+      if (!isForceFull(filter.force, filter.forceBounds)) {
         const g = parseForceGrams(info.force)
         if (g == null) return
-        if (filter.force === 'lt35' && !(g < 35)) return
-        if (filter.force === '35to39' && !(g >= 35 && g <= 39)) return
-        if (filter.force === 'gte40' && !(g >= 40)) return
+        if (g < filter.force.min || g > filter.force.max) return
       }
       set.add(hole)
     })
     return set
-  }, [filterActive, filter.feel, filter.force, keymapCodes, mapped, infoByCode])
+  }, [filterActive, filter.feel, filter.force, filter.forceBounds, keymapCodes, mapped, infoByCode])
 
   // 穴インデックスは行1(奥)→手前の row-major 順(行5〜行6 = 末尾 16 穴 = y=-28.55..-47.6・低デッキ)。
   const allHoles = useMemo(() => centers.map((_, i) => i), [centers])
@@ -1002,7 +1022,7 @@ function TesterScene({
 }) {
   const aspect = useThree((state) => state.viewport.aspect)
   const portrait = aspect < 1
-  const filterMode = filter.feel !== 'all' || filter.force !== 'all'
+  const filterMode = filter.feel !== 'all' || !isForceFull(filter.force, filter.forceBounds)
   // 見下ろし表示: フィルタモード中、または縦長 'both'(回転せず固定角度で展示)のとき。
   // 通常の回転展示(横長 'both'・単台)では従来どおりのカメラを維持する。
   const topDown = filterMode || (display === 'both' && portrait)
@@ -1082,7 +1102,7 @@ export interface TesterStageProps {
   /** WebGL 非対応 / GLB 読込失敗時の 2D フォールバック */
   fallback: ReactNode
   /**
-   * idle 絞り込み状態。いずれかの条件が 'all' 以外のとき:
+   * idle 絞り込み状態。感触が 'all' 以外、または押下圧範囲が全範囲でないとき:
    * - キャップ色を該当=赤発光(明滅) / 非該当=暗色に上書き
    * - モデル回転を停止し、やや斜めの固定アングルへ移動(カメラは見下ろしへ damp 遷移)
    */
