@@ -1,0 +1,71 @@
+:root {
+  color-scheme: dark;
+  --bg: #070b16;
+  --bg-elevated: #10182a;
+  --bg-panel: #121a2d;
+  --line: #2a3652;
+  --text: #f2f6ff;
+  --text-dim: #a7b4ce;
+  --text-faint: #7f8bab;
+  --accent: #5b9dff;
+  --accent-2: #6ef0c4;
+  --danger: #ff7b90;
+  --shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+  --radius-lg: 28px;
+  --radius-md: 18px;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+
+  font-family:
+    "SF Pro Display", "Hiragino Sans", "Hiragino Kaku Gothic ProN",
+    "Noto Sans JP", "Segoe UI", sans-serif;
+  line-height: 1.45;
+  font-weight: 400;
+  color: var(--text);
+  background: var(--bg);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  min-height: 100%;
+  min-height: 100dvh;
+  background: var(--bg);
+}
+
+body {
+  min-width: 320px;
+  overscroll-behavior: none;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+::selection {
+  background: rgba(91, 157, 255, 0.35);
+}
