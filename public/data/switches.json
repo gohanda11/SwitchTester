@@ -615,11 +615,14 @@
     "form": "choc",
     "feel": "linear",
     "force": "37±10g",
-    "description": "JezailFunder × Kailh 共同開発の静音リニアスイッチ(Choc)。霧のような静かな打鍵感を目指したロープロファイルスイッチ。",
+    "description": "JezailFunder × Kailh 共同開発の静音リニアスイッチ(Choc V2)。高透過PCトップハウジングとPOMボトムハウジング・ステムで構成し、底打ち時のゴム感を抑えた滑らかで静かな打鍵感を実現。ファクトリールブ済み。",
     "image": "images/switches/mist-switch.jpg",
     "buyUrl": "https://jezailfunder.jp/products/mist-switch",
     "manufacturer": "JezailFunder × Kailh",
     "price": "¥6,500(税込・50個)※現在売り切れ",
+    "preTravel": "1.3±0.3mm",
+    "totalTravel": "2.8±0.25mm",
+    "materials": "トップPC(高透過)/ボトムPOM/ステムPOM",
     "shopName": "JezailFunder Japan"
   },
   {
