@@ -610,20 +610,17 @@
     "shopName": "遊舎工房"
   },
   {
-    "id": "kailh-spring-mini",
-    "name": "Kailh Spring MINI",
+    "id": "mist-switch",
+    "name": "霧 キースイッチ / Mist Switch",
     "form": "choc",
     "feel": "linear",
-    "force": "40g",
-    "description": "FLOW GHOSTやWhite Rainよりも40gfとバネがやや軽い軽量リニア。PCトップ・POMボトム&ステム構成。Choc V2専用設計。",
-    "image": "images/switches/kailh-spring-mini.jpg",
-    "buyUrl": "https://shop.talpkeyboard.com/products/kailh-spring-mini-chocv2",
-    "manufacturer": "Kailh",
-    "price": "¥400(税込・5個)",
-    "preTravel": "1.2±0.30mm",
-    "totalTravel": "2.8±0.25mm",
-    "materials": "PC(トップ)/POM(ボトム・ステム)",
-    "shopName": "TALP KEYBOARD"
+    "force": "37±10g",
+    "description": "JezailFunder × Kailh 共同開発の静音リニアスイッチ(Choc)。霧のような静かな打鍵感を目指したロープロファイルスイッチ。",
+    "image": "images/switches/mist-switch.jpg",
+    "buyUrl": "https://jezailfunder.jp/products/mist-switch",
+    "manufacturer": "JezailFunder × Kailh",
+    "price": "¥6,500(税込・50個)※現在売り切れ",
+    "shopName": "JezailFunder Japan"
   },
   {
     "id": "kailh-white-owl-mini",

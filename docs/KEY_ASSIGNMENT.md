@@ -126,7 +126,7 @@ SwitchTester 展示用テスター(HE / MX)の「物理スイッチ位置 → ev
 | 行5列3 | KeyS | KC_S | **Kailh Saker Mini** | linear |
 | 行5列4 | KeyT | KC_T | **Kailh Taro Ice Cream Mini Full-POM** | linear |
 | 行5列5 | KeyU | KC_U | **Kailh Glacial Silver** | linear |
-| 行5列6 | KeyV | KC_V | **Kailh Spring MINI** | linear |
+| 行5列6 | KeyV | KC_V | **Mist Switch(霧)** | linear |
 | 行5列7 | KeyW | KC_W | **LOFREE Specter Low-profile POM** | linear |
 | 行5列8 | KeyX | KC_X | **LOFREE Surfer Low-profile POM** | linear |
 | 行6列1 | KeyI | KC_I | **LOFREE Hades Low-profile POM** | linear |
@@ -151,7 +151,7 @@ SwitchTester 展示用テスター(HE / MX)の「物理スイッチ位置 → ev
 | MX | ws-light-tactile | Light Tactile | 45g | tactile | Gateron Mini i と実質同感触 |
 | MX | durock-blue-lotus | Blue Lotus | 55g | tactile | T1 系が 3 連続になるため |
 | MX | gateron-green-apple | Green Apple | 63g | tactile | 同ブランド重めタクタイルとニッチ重複 |
-| Choc | mist-switch | Mist Switch | 37g | linear | 在庫切れのため調達困難 |
+| Choc | kailh-spring-mini | Spring MINI | 40g | linear | Mist Switch に差し替えのため |
 | Choc | lofree-ghost-low-profile-pom | Ghost | 50g | linear | Full POM 50g リニアで White Rain / Spring MINI と重複 |
 
 ---
